@@ -13,10 +13,14 @@ FarmaYa es una plataforma de comercio electrónico completa diseñada para farma
 git clone https://github.com/LIUNKS/FarmaYa.git
 cd FarmaYa
 
-# 2. Levantar todo el sistema (DB + Backend)
+# 2. Crear variables de entorno locales
+cp .env.example .env
+# Edita .env y define contraseñas seguras
+
+# 3. Levantar todo el sistema (DB + Backend)
 docker compose up --build
 
-# 3. Abrir en el navegador
+# 4. Abrir en el navegador
 # Backend API: http://localhost:8080
 # Swagger UI: http://localhost:8080/swagger-ui.html
 # Frontend: Abre frontend/farmacia-merysalud/index.html
@@ -142,9 +146,9 @@ docker compose up --build farmaya-app
 docker compose down -v
 ```
 
-### Configuración de variables de entorno (Opcional)
+### Configuración de variables de entorno
 
-Si deseas cambiar las credenciales de la base de datos:
+Antes de ejecutar Docker Compose, define tus variables locales:
 
 ```bash
 # Crear archivo .env en la raíz del proyecto
@@ -157,11 +161,19 @@ nano .env
 Ejemplo de `.env`:
 
 ```env
-MYSQL_ROOT_PASSWORD=TuContraseñaSegura
+MYSQL_ROOT_PASSWORD=TuContraseñaRootSegura
+MYSQL_PASSWORD=TuContraseñaAppSegura
 MYSQL_DATABASE=farmaya
+MYSQL_USER=farmaya_app
+SPRING_SQL_INIT_MODE=always
 ```
 
 **Nota de seguridad**: El archivo `.env` está ignorado en `.gitignore` para evitar subir credenciales al repositorio.
+
+**Importante**:
+- En desarrollo (Docker Compose local): `SPRING_SQL_INIT_MODE=always` para cargar el script SQL.
+- En producción: usar `SPRING_SQL_INIT_MODE=never`.
+- MySQL no se publica al host por defecto. Si necesitas exponer el puerto para herramientas locales, hazlo con un `docker-compose.override.yml` local (no versionado).
 
 ---
 
@@ -182,7 +194,9 @@ mysql -u root -p < backend/src/main/resources/farmaYa.sql
 
 ```bash
 docker run --name farmaya-db \
-  -e MYSQL_ROOT_PASSWORD=Johan12315912 \
+  -e MYSQL_ROOT_PASSWORD=TuContraseñaRootSegura \
+  -e MYSQL_USER=farmaya_app \
+  -e MYSQL_PASSWORD=TuContraseñaAppSegura \
   -e MYSQL_DATABASE=farmaya \
   -p 3306:3306 \
   -v farmaya_data:/var/lib/mysql \
@@ -199,11 +213,12 @@ cd backend
 nano src/main/resources/application.properties
 ```
 
-**Credenciales por defecto**:
+**Variables recomendadas para entorno local**:
 
-- Usuario: `root`
-- Contraseña: `Johan12315912`
-- Base de datos: `farmaya`
+- `SPRING_DATASOURCE_USERNAME=farmaya_app`
+- `SPRING_DATASOURCE_PASSWORD=<tu_password_app>`
+- `MYSQL_DATABASE=farmaya`
+- `SPRING_SQL_INIT_MODE=always` (solo desarrollo)
 
 ### 4B. Ejecutar el Backend
 
