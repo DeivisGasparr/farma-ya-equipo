@@ -1,0 +1,7 @@
+name: CI Backend - FarmaYa
+
+on:
+  push:
+    branches:
+      - main
+      - feature/ci-backend
