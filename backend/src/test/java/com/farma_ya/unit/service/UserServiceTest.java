@@ -46,7 +46,7 @@ class UserServiceTest {
         adminUser.setRolId(1); // Explicitly set rolId for ADMIN
 
         deliveryUser = new User(3, "delivery", "delivery@example.com", "delpass", Role.DELIVERY);
-        deliveryUser.setRolId(3); // Explicitly set rolId for DELIVERY
+        deliveryUser.setRolId(35); // Explicitly set rolId for DELIVERY
     }
 
     @Test
