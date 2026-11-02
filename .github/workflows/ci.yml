@@ -37,5 +37,7 @@ jobs:
       - name: Preparar Maven Wrapper
         run: chmod +x ./mvnw
 
+    
       - name: Compilar y ejecutar pruebas
-        run: ./mvnw --batch-mode --no-transfer-progress clean test
+        run: ./mvnw --batch-mode --no-transfer-progress -f pom.xml clean test
+
